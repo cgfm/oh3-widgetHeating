@@ -226,13 +226,61 @@ props:
       type: TEXT
       groupName: chartSettings
       advanced: true
-    - description: Text in the middle bottom of the circle
+    - description: Text in the middle bottom of the circle (default Temperatur)
       label: Bottom text
       name: bottomText
       required: false
       type: TEXT
       groupName: languageSettings
       advanced: true
+    - label: Off
+      description: If target temperature is NULL or UNDEF (default Aus)
+      name: textOff
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - description: Name of the max temp marker of the chart. (default Höchsttemperatur)
+      label: Max Temp
+      name: textMaxTemp
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - label: Min Temp
+      description: Name of the min temp marker of the chart. (default Tiefsttemperatur)
+      name: textMinTemp
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - label: Current temperature
+      description: default Ist Temp.
+      name: textCurrTemp
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - label: Target temperature
+      description: default Soll Temp.
+      name: textTrgtTemp
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - label: Time
+      description: Name of the time axis in the chart (default Uhrzeit)
+      name: textTime
+      required: false
+      type: TEXT
+      groupName: languageSettings
+      advanced: true
+    - description: Name of the temperature axis in the chart (default Temperatur)
+      label: Temperature
+      name: textTemp
+      required: false
+      type: TEXT
+      groupName: languageSettings
   parameterGroups:
     - name: mainItems
       label: Main Items (setpoint-temperature, current temperature, humidity)
@@ -440,7 +488,7 @@ slots:
                                 default:
                                   - component: Label
                                     config:
-                                      text: '=props.bottomText ? props.bottomText : "Heating"'
+                                      text: '=props.bottomText ? props.bottomText : "Temperatur"'
                       - component: f7-block
                         config:
                           class: shadow
@@ -575,7 +623,7 @@ slots:
                                               color: white
                                               font-size: "=props.fontSizeMarker ? props.fontSizeMarker : '1em'"
                                               font-weight: bold
-                                            text: =items[props.setPointItem].state=="NULL"?'Aus':items[props.setPointItem].state.split(' ')[0]
+                                            text: =items[props.setPointItem].state=="NULL" || items[props.setPointItem].state=="UNDEF"?(props.textOff?props.textOff:"Aus"):items[props.setPointItem].state.split(' ')[0]
                       - component: f7-block
                         config:
                           class: center
@@ -1004,13 +1052,13 @@ slots:
                                                           color: "=props.colorCurrentMarker ? props.colorCurrentMarker : 'rgb(33, 150, 243)'"
                                                         markPoint:
                                                           data:
-                                                            - name: Höchsttemperatur
+                                                            - name: "=props.textMaxTemp ? props.textMaxTemp : 'Höchsttemperatur'"
                                                               type: max
-                                                            - name: Tiefsttemperatur
+                                                            - name: "=props.textMinTemp ? props.textMinTemp : 'Tiefsttemperatur'"
                                                               type: min
                                                           itemStyle:
                                                             color: "=props.colorCurrentMarker ? props.colorCurrentMarker : 'rgb(33, 150, 243)'"
-                                                        name: Ist Temp. Indoor
+                                                        name: "=props.textCurrTemp ? props.textCurrTemp : 'Ist Temp.'"
                                                         smooth: true
                                                         type: line
                                                         xAxisIndex: 0
@@ -1021,7 +1069,7 @@ slots:
                                                         item: "=props.currentPointItem ? props.currentPointItem : ''"
                                                         lineStyle:
                                                           color: "=props.colorSetMarker ? props.colorSetMarker : 'rgb(230, 74, 25)'"
-                                                        name: Soll Temp. Indoor
+                                                        name: "=props.textTrgtTemp ? props.textTrgtTemp : 'Soll Temp.'"
                                                         step: end
                                                         type: line
                                                         xAxisIndex: 0
@@ -1049,7 +1097,7 @@ slots:
                                                           show: false
                                                         boundaryGap: false
                                                         gridIndex: 0
-                                                        name: Uhrzeit
+                                                        name: "=props.textTime ? props.textTime : 'Uhrzeit'"
                                                         show: true
                                                   yAxis:
                                                     - component: oh-value-axis
@@ -1059,7 +1107,7 @@ slots:
                                                         gridIndex: 0
                                                         max: auto
                                                         min: auto
-                                                        name: Temperatur
+                                                        name: "=props.textTemp ? props.textTemp : 'Temperatur'"
                                                         nameGap: 45
                                                         nameLocation: center
                                                         show: false
